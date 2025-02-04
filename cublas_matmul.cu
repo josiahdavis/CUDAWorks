@@ -16,9 +16,9 @@ void matrixMultiplyCublas(const int N){
 
     // Allocate device memory
     float *d_A, *d_B, *d_C;
-    cudaMalloc((voic**)&d_A, N*N*sizeof(float));
-    cudaMalloc((voic**)&d_B, N*N*sizeof(float));
-    cudaMalloc((voic**)&d_C, N*N*sizeof(float));
+    cudaMalloc((void**)&d_A, N*N*sizeof(float));
+    cudaMalloc((void**)&d_B, N*N*sizeof(float));
+    cudaMalloc((void**)&d_C, N*N*sizeof(float));
 
     // Copy data to device
     cudaMemcpy(d_A, h_A, N * N * sizeof(float), cudaMemcpyHostToDevice);
