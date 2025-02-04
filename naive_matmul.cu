@@ -1,3 +1,6 @@
+#include <stdio.h>
+#include <curand_kernel.h>
+#include <cuda_runtime.h>
 /*                                                                                                        
    Naive computation of matmul: AxB = C             
    A is (m,k)                                       
