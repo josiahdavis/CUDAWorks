@@ -76,8 +76,8 @@ int main(){
     dim3 gridDim(1, 1, 1);
     unsigned int seed = time(NULL);
     initializeMatrix<<<gridDim, blockDim>>>(A, M, N, seed);
-    initializeMatrix<<<gridDim, blockDim>>>(B, M, N, seed);
-    initializeMatrix<<<gridDim, blockDim>>>(C, M, N, seed);
+    initializeMatrix<<<gridDim, blockDim>>>(B, M, N, seed+1);
+    initializeMatrix<<<gridDim, blockDim>>>(C, M, N, seed+2);
 
     // Peform matmul
     matmul<<<gridDim, blockDim>>>(A, B, C, M, N, K);
