@@ -5,3 +5,4 @@ Short stand-alone examples of how to use CUDA
 2. [`create_matrix_gpu.cu`](create_matrix_gpu.cu): Initialize random matrix on the GPU, copy to CPU and print.
 3. [`vector_add.cu`](vector_add.cu): Initialize two random vectors on the CPU, copy to GPU and add together.
 4. [`naive_square.cu`](naive_square.cu): Naive matmul with two square matrices.
+5. [`naive_matmul.cu`](naive_matmul.cu): Naive matmul with two non-square matrices.
