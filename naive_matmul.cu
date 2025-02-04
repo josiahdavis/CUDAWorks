@@ -89,9 +89,9 @@ int main(){
     cudaMemcpy(A_h, A, M * K * sizeof(float), cudaMemcpyDeviceToHost);
     cudaMemcpy(B_h, B, K * N * sizeof(float), cudaMemcpyDeviceToHost);
     cudaMemcpy(C_h, C, M * N * sizeof(float), cudaMemcpyDeviceToHost);
-    print_matrix(A_h);
-    print_matrix(B_h);
-    print_matrix(C_h);
+    print_matrix(A_h, M, K);
+    print_matrix(B_h, K, N);
+    print_matrix(C_h, M, N);
 
     // Clean up
     cudaFree(A);
