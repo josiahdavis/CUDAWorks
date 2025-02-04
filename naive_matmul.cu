@@ -30,9 +30,6 @@ void print_matrix(float *A, int M, int N){
     printf("]\n");
 }
 
-#include <stdio.h>                          
-#include <curand_kernel.h> 
-#include <cuda_runtime.h>
 __global__ void initializeMatrix(float*matrix, int m, int n, unsigned int seed){
     int x = blockIdx.x * blockDim.x + threadIdx.x;
     int y = blockIdx.y * blockDim.y + threadIdx.y;
