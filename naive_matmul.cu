@@ -22,7 +22,7 @@ void print_matrix(float *A, int M, int N){
         }
         // Start of new row
         else if ((i + 1) % N == 1 && i > 0)
-            printf("%6.2f, ", A[i]);
+            printf("%7.3f, ", A[i]);
         // Within the given row
         else
             printf("%5.2f, ", A[i]);
