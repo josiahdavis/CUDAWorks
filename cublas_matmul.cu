@@ -2,6 +2,17 @@
 #include <cuda_runtime.h>
 #include <cublas_v2.h>
 
+void printMatrix(const float* matrix, int N, const char* name){
+    std::cout <<"Matrix " << name << " showing top-left 5x5): " << std::endl;
+    for (int i = 0; i < 5 && i < N; i++){
+        for (int j = 0; j < 5 && j < N; j++){
+            std::cout << matrix[i * N + j] << " ";
+        }
+        std::cout << std::endl;
+    }
+    std::cout << std::endl;
+}
+
 void matrixMultiplyCublas(const int N){
     // Allocate host memory
     float *h_A = new float[N * N];
@@ -13,6 +24,10 @@ void matrixMultiplyCublas(const int N){
         h_A[i] = static_cast<float>(rand() / RAND_MAX);
         h_B[i] = static_cast<float>(rand() / RAND_MAX);
     }
+
+    // Print input matrices
+    printMatrix(h_A, N, "A");
+    printMatrix(h_B, N, "B");
 
     // Allocate device memory
     float *d_A, *d_B, *d_C;
@@ -34,6 +49,9 @@ void matrixMultiplyCublas(const int N){
 
     // Copy results back to host
     cudaMemcpy(h_C, d_C, N * N * N * sizeof(float), cudaMemcpyDeviceToHost);
+    
+    // Print output matrix
+    printMatrix(h_C, N, "C");
 
     // Clean up
     cublasDestroy(handle);
