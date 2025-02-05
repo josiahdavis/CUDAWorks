@@ -22,8 +22,10 @@ void matrixMultiplyCublas(const int N){
 
     // Initialize matrices
     for (int i = 0; i < N * N; i++){
-        h_A[i] = (float)rand()/(float)RAND_MAX;
-        h_B[i] = (float)rand()/(float)RAND_MAX;
+        h_A[i] = i;
+        h_B[i] = i * 2;
+        // h_A[i] = (float)rand()/(float)RAND_MAX;
+        // h_B[i] = (float)rand()/(float)RAND_MAX;
         // h_A[i] = static_cast<float>(rand() / RAND_MAX) * 10.0f;
         // h_B[i] = static_cast<float>(rand() / RAND_MAX) * 10.0f;
     }
