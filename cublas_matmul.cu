@@ -54,7 +54,7 @@ void matrixMultiplyCublas(const int N){
     cublasSgemm(handle,CUBLAS_OP_N, CUBLAS_OP_N, N, N, N, &alpha, d_A, N, d_B, N, &beta, d_C, N);
 
     // Copy results back to host
-    cudaMemcpy(h_C, d_C, N * N * N * sizeof(float), cudaMemcpyDeviceToHost);
+    cudaMemcpy(h_C, d_C, N * N * sizeof(float), cudaMemcpyDeviceToHost);
     
     // Print output matrix
     printMatrix(h_C, N, "C");
