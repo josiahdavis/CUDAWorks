@@ -1,5 +1,4 @@
 #include <iostream>
-#include <stdio.h>
 #include <cuda_runtime.h>
 #include <cublas_v2.h>
 
@@ -26,8 +25,6 @@ void matrixMultiplyCublas(const int N){
         h_B[i] = i * 2;
         // h_A[i] = (float)rand()/(float)RAND_MAX;
         // h_B[i] = (float)rand()/(float)RAND_MAX;
-        // h_A[i] = static_cast<float>(rand() / RAND_MAX) * 10.0f;
-        // h_B[i] = static_cast<float>(rand() / RAND_MAX) * 10.0f;
     }
 
     // Print input matrices
@@ -49,8 +46,8 @@ void matrixMultiplyCublas(const int N){
     cublasHandle_t handle;
     cublasCreate(&handle);
 
-    float alpha = 1.0f, beta = 0.0f;
-    cublasSgemm(handle,CUBLAS_OP_N, CUBLAS_OP_N, N, N, N, &alpha, d_A, N, d_B, N, &beta, d_C, N);
+    float alpha = 1.0f, beta = 0.0f; // C = α*(A@B)+β*C, not sure what the purpose of beta param
+    cublasSgemm(handle, CUBLAS_OP_N, CUBLAS_OP_N, N, N, N, &alpha, d_A, N, d_B, N, &beta, d_C, N);
 
     // Copy results back to host
     cudaMemcpy(h_C, d_C, N * N * sizeof(float), cudaMemcpyDeviceToHost);
