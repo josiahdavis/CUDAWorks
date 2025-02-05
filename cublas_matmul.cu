@@ -1,4 +1,5 @@
 #include <iostream>
+#include <stdio.h>
 #include <cuda_runtime.h>
 #include <cublas_v2.h>
 
@@ -24,7 +25,8 @@ void matrixMultiplyCublas(const int N){
         h_A[i] = static_cast<float>(rand() / RAND_MAX) * 10.0f;
         h_B[i] = static_cast<float>(rand() / RAND_MAX) * 10.0f;
     }
-
+    printf("%6.2f, %6.2f, %6.2f ", h_A[0], h_A[1], h_A[2]);
+    printf("%6.2f, %6.2f, %6.2f ", h_B[0], h_B[1], h_B[2]);
     std::cout << "h_A[0]: " << h_A[0] << " h_B[0]: " << h_B[0] << std::endl;
 
     // Print input matrices
