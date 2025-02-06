@@ -13,6 +13,17 @@ void printMatrix(const float* matrix, int rows, int cols, const char* name){
     printf("\n");
 }
 
+void matrixMultiplyCpu(const float *A, const float *B, const float *C, int M, int N, int K){
+    for (int i = 0; i < M; i++){
+        for (int j = 0; j < N; i++){
+            C[i * N + j] = 0.0f;
+            for (int k = 0; k < K; k++){
+                C[i * N + j] += A[i * K + k] * B[k * N + j];
+            }
+        }
+    }
+}
+
 void matrixMultiplyCublas(const int M, const int N, const int K){
     // Allocate host memory
     // M = the number of rows in C and A
@@ -24,11 +35,11 @@ void matrixMultiplyCublas(const int M, const int N, const int K){
 
     // Initialize matrices
     for (int i = 0; i < M * K; i++){
-        h_A[i] = i;
+        h_A[i] = i % 10;
         // h_A[i] = (float)rand()/(float)RAND_MAX;
     }
     for (int i = 0; i < K * N; i++){
-        h_B[i] = i * 2;
+        h_B[i] = (i % 5);
         // h_B[i] = (float)rand()/(float)RAND_MAX;
     }
     
@@ -66,6 +77,17 @@ void matrixMultiplyCublas(const int M, const int N, const int K){
     // Print output matrix
     printMatrix(h_C, M, N, "C");
 
+    // Verify result is correct
+    float *h_C_ref = new float[M * N];
+    matrixMultiplyCpu(h_A, h_B, h_C_ref, M, N, K);
+    printf("Comparing CPU and GPU results ...\n");
+    for (int i = 0; i < M * N; i ++ ){
+        if fabs(h_C[i] - h_C_ref[i]) > 1e-3 {
+            printf("Mismatch at index %d CPU = %5.2f GPU = %5.2f\n", i);
+            break;
+        }
+    }
+
     // Clean up
     cublasDestroy(handle);
     cudaFree(d_A);
@@ -74,6 +96,7 @@ void matrixMultiplyCublas(const int M, const int N, const int K){
     delete[] h_A;
     delete[] h_B;
     delete[] h_C;
+    delete[] h_C_ref;
 }
 
 int main() {
