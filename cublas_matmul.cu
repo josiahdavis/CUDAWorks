@@ -70,7 +70,7 @@ void matrixMultiplyCublas(const int M, const int N, const int K){
     // leading dimension (lda, ldb, ldc) is not necessarily the number of rows—it's the stride (or pitch) between consecutive columns).
     // cuBLAS stores matrices in column-major order, meaning that elements of each column are stored contiguously in memory.
     // cublasSgemm(handle, CUBLAS_OP_N, CUBLAS_OP_N, M, N, K, &alpha, d_A, M, d_B, K, &beta, d_C, M); 
-    cublasSgemm(handle, CUBLAS_OP_N, CUBLAS_OP_N, N, M, K, &alpha, d_B, N, A, K, &beta, d_C, N);
+    cublasSgemm(handle, CUBLAS_OP_N, CUBLAS_OP_N, N, M, K, &alpha, d_B, N, d_A, K, &beta, d_C, N);
 
     // Copy results back to host
     cudaMemcpy(h_C, d_C, M * N * sizeof(float), cudaMemcpyDeviceToHost);
