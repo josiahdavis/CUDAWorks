@@ -83,7 +83,7 @@ void matrixMultiplyCublas(const int M, const int N, const int K){
     printf("Comparing CPU and GPU results ...\n");
     for (int i = 0; i < M * N; i ++ ){
         if (fabs(h_C[i] - h_C_ref[i]) > 1e-3) {
-            printf("Mismatch at index %d CPU = %5.2f GPU = %5.2f\n", i);
+            printf("Mismatch at index %d CPU = %5.2f GPU = %5.2f\n", i, h_C_ref[i], h_C[i]);
             break;
         }
     }
