@@ -3,10 +3,10 @@
 #include <cublas_v2.h>
 
 void printMatrix(const float* matrix, int rows, int cols, const char* name){
-    printf("Matrix %s showing top-left 5x5", name);
+    printf("Matrix %s showing top-left 5x5\n", name);
     for (int i = 0; i < 5 && i < rows; i++){
         for (int j = 0; j < 5 && j < cols; j++){
-            printf("%5.2f ", matrix[i * cols + j]);
+            printf("%5.1f ", matrix[i * cols + j]);
         }
         printf("\n");
     }
