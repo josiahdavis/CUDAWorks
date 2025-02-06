@@ -8,7 +8,7 @@ Short stand-alone examples of how to use CUDA
 4. [`naive_square.cu`](naive_square.cu): Naive matmul with two square matrices.
 5. [`naive_matmul.cu`](naive_matmul.cu): Naive matmul with two non-square matrices.
 6. [`cublas_square.cu`](cublas_square.cu): Matrix multiplication using cublas (square matrices).
-7. [`cublas_matmul.cu`](cublas_matmul.cu): Matrix multiplication using cublas (non-square matrices).
+7. [`cublas_matmul.cu`](cublas_matmul.cu): Matrix multiplication using cublas (non-square matrices). Verify result with C.
 
 ### Instructions
 

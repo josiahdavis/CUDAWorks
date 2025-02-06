@@ -67,8 +67,7 @@ void matrixMultiplyCublas(const int M, const int N, const int K){
     // CUBLAS_OP_N: is the non-transpose operation is selected
     // M, N: The number of rows and cols in C
     // K: The inner dimension of A and B
-    // leading dimension (lda, ldb, ldc) is not necessarily the number of rows—it's the stride (or pitch) between consecutive columns).
-    // cuBLAS stores matrices in column-major order, meaning that elements of each column are stored contiguously in memory.
+    // leading dimension (lda, ldb, ldc) is not necessarily the number of rows—it's the stride.
     // cublasSgemm(handle, CUBLAS_OP_N, CUBLAS_OP_N, M, N, K, &alpha, d_A, M, d_B, K, &beta, d_C, M); 
     cublasSgemm(handle, CUBLAS_OP_N, CUBLAS_OP_N, N, M, K, &alpha, d_B, N, d_A, K, &beta, d_C, N);
 
