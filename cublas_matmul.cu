@@ -13,7 +13,7 @@ void printMatrix(const float* matrix, int rows, int cols, const char* name){
     printf("\n");
 }
 
-void matrixMultiplyCpu(const float *A, const float *B, const float *C, int M, int N, int K){
+void matrixMultiplyCpu(const float *A, const float *B, float *C, int M, int N, int K){
     for (int i = 0; i < M; i++){
         for (int j = 0; j < N; i++){
             C[i * N + j] = 0.0f;
