@@ -74,14 +74,14 @@ int main(){
     dimGrid = dim3(ceil(in_features/(float)BLOCK_SIZE), ceil(batch_size/(float)BLOCK_SIZE), 1);
     dimBlock = dim3(BLOCK_SIZE, BLOCK_SIZE, 1);
     init_rand<<<dimGrid, dimBlock>>>(in_features, batch_size, d_X);
-    
+
     // Perform Matrix Multiplication
     dimGrid = dim3(ceil(out_features/(float)BLOCK_SIZE), ceil(batch_size/(float)BLOCK_SIZE), 1);
     dimBlock = dim3(BLOCK_SIZE, BLOCK_SIZE, 1);
     // batch_size, n, out_w, input, weights, biases, output
     matmul<<<dimGrid, dimBlock>>>(batch_size, in_features, out_features, d_X, d_weights, d_biases, d_out);
 
-    // Inspect output on CPU
+    // Copy data to CPU
     float *h_X = new float[batch_size * in_features];
     float *h_weights = new float[in_features * out_features];
     float *h_out = new float[batch_size * out_features];
@@ -89,11 +89,12 @@ int main(){
     cudaMemcpy(h_X, d_X, batch_size * in_features * sizeof(float), cudaMemcpyDeviceToHost);
     cudaMemcpy(h_weights, d_weights, in_features * out_features * sizeof(float), cudaMemcpyDeviceToHost);
     cudaMemcpy(h_biases, d_biases, out_features * sizeof(float), cudaMemcpyDeviceToHost);
-    // cudaMemcpy(h_out, d_out, batch_size * out_features * sizeof(float), cudaMemcpyDeviceToHost);
+    cudaMemcpy(h_out, d_out, batch_size * out_features * sizeof(float), cudaMemcpyDeviceToHost);
 
+    // Print data for inspection
     printMatrix(h_X, batch_size, in_features, "X");
     printMatrix(h_weights, in_features, out_features, "Weights");
     printMatrix(h_biases, 1, out_features, "Biases");
-
+    printMatrix(h_out, 1, out_features, "Biases");
     return 0;
 }
