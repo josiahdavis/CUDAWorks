@@ -16,7 +16,7 @@ __global__ void init_rand(int w, int h, float* mat)
 }
 
 // Computes output = W * X + b
-__global__ void matmul(int batch_size, int n, int out_w, float* input, 
+__global__ void matmul(int batch_size, int in_w, int out_w, float* input, 
                         float* weights, float* biases, float* output)
 {
     int column = blockIdx.x*blockDim.x + threadIdx.x; 
@@ -24,14 +24,14 @@ __global__ void matmul(int batch_size, int n, int out_w, float* input,
     if (row < batch_size && column < out_w)
     {
         output[row*out_w + column] = biases[column];
-        for(int i = 0; i < n; i++)
+        for(int i = 0; i < in_w; i++)
         {
-            output[row * out_w + column] += weights[i * out_w + column] * input[row * n + i];
+            output[row * out_w + column] += weights[i * out_w + column] * input[row * in_w + i];
         }
     }
 }
 
-void printMatrix(const float* matrix, int rows, int cols, const char* name){
+void print_matrix(const float* matrix, int rows, int cols, const char* name){
     printf("Matrix %s showing top-left 5x5\n", name);
     for (int i = 0; i < 5 && i < rows; i++){
         for (int j = 0; j < 5 && j < cols; j++){
@@ -92,9 +92,9 @@ int main(){
     cudaMemcpy(h_out, d_out, batch_size * out_features * sizeof(float), cudaMemcpyDeviceToHost);
 
     // Print data for inspection
-    printMatrix(h_X, batch_size, in_features, "X");
-    printMatrix(h_weights, in_features, out_features, "Weights");
-    printMatrix(h_biases, 1, out_features, "Biases");
-    printMatrix(h_out, batch_size, out_features, "Output");
+    print_matrix(h_X, batch_size, in_features, "X");
+    print_matrix(h_weights, in_features, out_features, "Weights");
+    print_matrix(h_biases, 1, out_features, "Biases");
+    print_matrix(h_out, batch_size, out_features, "Output");
     return 0;
 }
