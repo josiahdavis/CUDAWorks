@@ -68,7 +68,7 @@ int main(){
     // Initialize biases GPU
     dimGrid = dim3(ceil(out_features/(float)BLOCK_SIZE), 1, 1);
     dimBlock = dim3(BLOCK_SIZE, 1, 1);
-    init_rand<<<dimGrid, dimBlock>>>(1, out_features, d_biases);
+    init_rand<<<dimGrid, dimBlock>>>(out_features, 1, d_biases);
 
     // Initialize data GPU
     dimGrid = dim3(ceil(in_features/(float)BLOCK_SIZE), ceil(batch_size/(float)BLOCK_SIZE), 1);
