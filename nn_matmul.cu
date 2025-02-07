@@ -16,7 +16,7 @@ __global__ void init_rand(int w, int h, float* mat)
 }
 
 // Computes output = W * X + b
-__global__ void forward(int batch_size, int n, int out_w, float* input, 
+__global__ void matmul(int batch_size, int n, int out_w, float* input, 
                         float* weights, float* biases, float* output)
 {
     int column = blockIdx.x*blockDim.x + threadIdx.x; 
@@ -77,6 +77,9 @@ int main(){
 
 
     // Perform Matrix Multiplication
+    dimGrid = dim3(ceil(out_features/(float)BLOCK_SIZE), ceil(batch_size/(float)BLOCK_SIZE), 1);
+    dimBlock = dim3(BLOCK_SIZE, BLOCK_SIZE, 1);
+    matmul<<<dimGrid, dimBlock>>>
 
 
     // Inspect output on CPU
