@@ -7,7 +7,7 @@ __global__ void init_matrix(float* mat, int rows, int cols){
     int col_j = blockIdx.y * blockDim.y + threadIdx.y;
 
     if (row_i < rows && col_j < cols){
-        int index = row_i * rows + col_j;
+        int index = row_i * cols + col_j;
         curandState state;
         curand_init(123, index, 0, &state);
         mat[index] = curand_normal(&state)*sqrtf(2.f/rows);
