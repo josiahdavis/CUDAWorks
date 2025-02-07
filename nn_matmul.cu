@@ -48,6 +48,7 @@ int main(){
     int batch_size = 2;
     int in_features = 3;
     int out_features = 4;
+    int BLOCK_SIZE = 16;
     
     // Allocate memory for GPU
     float *d_X;
@@ -67,11 +68,11 @@ int main(){
     // Initialize biases GPU
     dimGrid = dim3(ceil(out_features/(float)BLOCK_SIZE), 1, 1);
     dimBlock = dim3(BLOCK_SIZE, 1, 1);
-    init_rand<<<dimGrid, dimBlock>>>(1, out_features, biases);
+    init_rand<<<dimGrid, dimBlock>>>(1, out_features, d_biases);
 
     // Initialize data GPU
-    dim3 dimGrid = dim3(ceil(in_features/(float)BLOCK_SIZE), ceil(batch_size/(float)BLOCK_SIZE), 1);
-    dim3 dimBlock = dim3(BLOCK_SIZE, BLOCK_SIZE, 1);
+    dimGrid = dim3(ceil(in_features/(float)BLOCK_SIZE), ceil(batch_size/(float)BLOCK_SIZE), 1);
+    dimBlock = dim3(BLOCK_SIZE, BLOCK_SIZE, 1);
     init_rand<<<dimGrid, dimBlock>>>(in_features, batch_size, d_X);
 
 
