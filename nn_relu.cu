@@ -19,7 +19,7 @@ __global__ void relu(float* mat_in, float* mat_out, int rows, int cols){
     int col_j = blockIdx.y * blockDim.y + threadIdx.y;
 
     if (row_i < rows && col_j < cols){
-        int index = row_i * rows + col_j;
+        int index = row_i * cols + col_j;
         float activation = mat_in[index];
         mat_out[index] = activation > 0.f ? activation : 0.f;
     }
