@@ -10,6 +10,7 @@ Short stand-alone examples of how to use CUDA
 6. [`cublas_square.cu`](cublas_square.cu): Matrix multiplication using cublas (square matrices).
 7. [`cublas_matmul.cu`](cublas_matmul.cu): Matrix multiplication using cublas (non-square matrices). Verify result with C.
 8. [`nn_matmul.cu`](nn_matmul.cu): Matrix multiplication in the style of Neural Network with batch size, in/out features, adding bias.
+9. [`nn_relu.cu`](nn_relu.cu): Relu activation function example.
 
 ### Instructions
 
