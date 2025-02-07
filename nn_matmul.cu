@@ -95,6 +95,6 @@ int main(){
     printMatrix(h_X, batch_size, in_features, "X");
     printMatrix(h_weights, in_features, out_features, "Weights");
     printMatrix(h_biases, 1, out_features, "Biases");
-    printMatrix(h_out, 1, out_features, "Biases");
+    printMatrix(h_out, batch_size, out_features, "Output");
     return 0;
 }
