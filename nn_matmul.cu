@@ -74,13 +74,12 @@ int main(){
     dimGrid = dim3(ceil(in_features/(float)BLOCK_SIZE), ceil(batch_size/(float)BLOCK_SIZE), 1);
     dimBlock = dim3(BLOCK_SIZE, BLOCK_SIZE, 1);
     init_rand<<<dimGrid, dimBlock>>>(in_features, batch_size, d_X);
-
-
+    
     // Perform Matrix Multiplication
     dimGrid = dim3(ceil(out_features/(float)BLOCK_SIZE), ceil(batch_size/(float)BLOCK_SIZE), 1);
     dimBlock = dim3(BLOCK_SIZE, BLOCK_SIZE, 1);
-    matmul<<<dimGrid, dimBlock>>>
-
+    // batch_size, n, out_w, input, weights, biases, output
+    matmul<<<dimGrid, dimBlock>>>(batch_size, in_features, out_features, d_X, d_weights, d_biases, d_out);
 
     // Inspect output on CPU
     float *h_X = new float[batch_size * in_features];
