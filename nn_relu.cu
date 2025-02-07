@@ -53,14 +53,14 @@ int main(){
     // Initialize weights GPU
     dim3 dimGrid = dim3(ceil(batch_size/(float)BLOCK_SIZE), ceil(n_features/(float)BLOCK_SIZE), 1);
     dim3 dimBlock = dim3(BLOCK_SIZE, BLOCK_SIZE, 1);
-    init_matrix<<<dimGrid, dimBlock>>>(batch_size, n_features, d_in);
+    init_matrix<<<dimGrid, dimBlock>>>(d_in, batch_size, n_features);
     relu<<<dimGrid, dimBlock>>>(d_in, d_out, batch_size, n_features);
     
     // Copy to CPU
     float *h_in = new float[batch_size * n_features];
     float *h_out = new float[batch_size * n_features];
-    cudaMemcpy(h_in, d_in, batch_size * in_features * sizeof(float), cudaMemcpyDeviceToHost);
-    cudaMemcpy(h_out, d_out, batch_size * in_features * sizeof(float), cudaMemcpyDeviceToHost);
+    cudaMemcpy(h_in, d_in, batch_size * n_features * sizeof(float), cudaMemcpyDeviceToHost);
+    cudaMemcpy(h_out, d_out, batch_size * n_features * sizeof(float), cudaMemcpyDeviceToHost);
 
     // Inspect
     print_matrix(h_in, batch_size, n_features, "Input");
