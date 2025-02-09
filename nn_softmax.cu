@@ -21,7 +21,7 @@ __global__ void softmax(float* mat_in, float* mat_out, int rows, int cols){
     if (row_i < rows && col_j < cols){
         float maxval = mat_in[row_i * cols];
         for (int i = 1; i < cols; i ++){
-            maxval = max(maxval, mat_in[row_i * cols + i])
+            maxval = max(maxval, mat_in[row_i * cols + i]);
         }
         float divisor = 0.f;
         for (int i = 0; i < cols; i++){
