@@ -29,6 +29,7 @@ __global__ void init_vector(int *output, int rows, int n){
         curandState state;
         curand_init(123, i, 0, &state);
         output[i] = (int)(curand_uniform(&state) * n);
+        printf("Setting output %i to %f", i, output[i]);
     }
 }
 
