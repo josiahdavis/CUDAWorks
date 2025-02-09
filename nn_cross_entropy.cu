@@ -2,7 +2,7 @@
 #include <cuda_runtime.h>
 #include <curand_kernel.h>
 
-__global__ void init_matrix(float* mat, int rows, int cols){
+__global__ void init_matrix_normal(float* mat, int rows, int cols){
     int row_i = blockIdx.x * blockDim.x + threadIdx.x;
     int col_j = blockIdx.y * blockDim.y + threadIdx.y;
 
@@ -11,6 +11,24 @@ __global__ void init_matrix(float* mat, int rows, int cols){
         curandState state;
         curand_init(123, index, 0, &state);
         mat[index] = curand_normal(&state)*sqrtf(2.f/rows);
+    }
+}
+
+__global__ void init_matrix_one_hot(float* matrix, int indices, int rows, int cols){
+    int i = blockIdx.x * blockDim.x + threadIdx.x;
+    if (i < rows){
+        for (int j = 0; j < cols; ++j){
+            matrix[i * cols + j] = (j == indices[i]) ? 1.f : 0.f;
+        }
+    }
+}
+
+__global__ void init_vector(int *output, int rows, int n){
+    int i = blockIdx.x * blockDim.x + threadIdx.x;
+    if (i < rows){
+        curandState state;
+        curand_init(123, i, 0, &state);
+        output[i] = (int)(curand_uniform(&state) * n);
     }
 }
 
@@ -67,22 +85,26 @@ int main(){
     // Allocate memory for GPU
     float *d_logits;
     float *d_preds;
+    float *d_actuals_idx;
     float *d_actuals;
     float *d_losses;
     cudaMalloc((void **)&d_logits, batch_size * n_classes * sizeof(float));
     cudaMalloc((void **)&d_preds, batch_size * n_classes * sizeof(float));
     cudaMalloc((void **)&d_actuals, batch_size * n_classes * sizeof(float));
+    cudaMalloc((void **)&d_actuals_idx, batch_size * sizeof(float));
     cudaMalloc((void **)&d_losses, batch_size * sizeof(float));
 
     // Initialize weights GPU
     dim3 dimGrid = dim3(ceil(batch_size/(float)BLOCK_SIZE), ceil(n_classes/(float)BLOCK_SIZE), 1);
     dim3 dimBlock = dim3(BLOCK_SIZE, BLOCK_SIZE, 1);
     
-    // Actual labels will be 0 or 1, TODO
-    init_matrix<<<dimGrid, dimBlock>>>(d_actuals, batch_size, n_classes);
+    // Actual labels will be 0 or 1
+    // init_vector(int *output, int rows, int n){
+    init_vector<<<ceil(batch_size/(float)BLOCK_SIZE), BLOCK_SIZE>>>(d_actuals_idx, batch_size, n_classes);
+    init_matrix_one_hot<<<dimGrid, BLOCK_SIZE>>>(d_actuals, d_actuals_idx, batch_size, n_classes);
     
-    // NN outputs will be logits
-    init_matrix<<<dimGrid, dimBlock>>>(d_logits, batch_size, n_classes);
+    // Neural Network outputs will be logits
+    init_matrix_normal<<<dimGrid, dimBlock>>>(d_logits, batch_size, n_classes);
 
     // Calculate the output probabilities
     softmax<<<dimGrid, dimBlock>>>(d_logits, d_preds, batch_size, n_classes);
@@ -92,14 +114,18 @@ int main(){
     
     // Copy to CPU
     float *h_preds = new float[batch_size * n_classes];
+    float *h_actuals_idx = new float[batch_size];
     float *h_actuals = new float[batch_size * n_classes];
     float *h_losses = new float[batch_size];
     cudaMemcpy(h_preds, d_preds, batch_size * n_classes * sizeof(float), cudaMemcpyDeviceToHost);
     cudaMemcpy(h_actuals, d_actuals, batch_size * n_classes * sizeof(float), cudaMemcpyDeviceToHost);
+    cudaMemcpy(h_actuals_idx, d_actuals_idx, batch_size * sizeof(float), cudaMemcpyDeviceToHost);
     cudaMemcpy(h_losses, d_losses, batch_size * sizeof(float), cudaMemcpyDeviceToHost);
 
     // Inspect outputs
+    print_matrix(h_logits, batch_size, n_classes, "Logits");
     print_matrix(h_preds, batch_size, n_classes, "Preds");
+    print_matrix(h_actuals_idx, batch_size, 1, "Actual Class Labels");
     print_matrix(h_actuals, batch_size, n_classes, "Actuals");
     print_matrix(h_losses, batch_size, 1, "Losses");
 
