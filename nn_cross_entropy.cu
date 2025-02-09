@@ -14,6 +14,18 @@ __global__ void init_matrix(float* mat, int rows, int cols){
     }
 }
 
+__global__ void init_zero_one_uniform(float* mat, int rows, int cols){
+    int row_i = blockIdx.x * blockDim.x + threadIdx.x;
+    int col_j = blockIdx.y * blockDim.y + threadIdx.y;
+
+    if (row_i < rows && col_j < cols){
+        int index = row_i * cols + col_j;
+        curandState state;
+        curand_init(123, index, 0, &state);
+        mat[index] = curand_uniform(&state);
+    }
+}
+
 __global__ void cross_entropy(float* preds, float* actual, float* output, int batch_size, int class_size){
     // preds.shape =  (batch_size, clas_size)
     // actual.shape = (batch_size, class_size)
@@ -58,9 +70,12 @@ int main(){
     // Initialize weights GPU
     dim3 dimGrid = dim3(ceil(batch_size/(float)BLOCK_SIZE), ceil(n_classes/(float)BLOCK_SIZE), 1);
     dim3 dimBlock = dim3(BLOCK_SIZE, BLOCK_SIZE, 1);
-    init_matrix<<<dimGrid, dimBlock>>>(d_preds, batch_size, n_classes);
+    
+    // Actual labels will be 0 or 1
     init_matrix<<<dimGrid, dimBlock>>>(d_actuals, batch_size, n_classes);
-    init_matrix<<<ceil(n_classes/(float)BLOCK_SIZE), BLOCK_SIZE>>>(d_losses, batch_size, 1);
+    
+    // NN outputs will be probabilities from 0-1
+    init_zero_one_uniform<<<dimGrid, dimBlock>>>(d_preds, batch_size, n_classes);
 
     // Calculate cross entropy losses
     cross_entropy<<<dimGrid, dimBlock>>>(d_preds, d_actuals, d_losses, batch_size, n_classes);
@@ -83,6 +98,6 @@ int main(){
     for (int b = 0; b < batch_size; b++){
         cumulative_loss += h_losses[b];
     }
-    printf("Total loss %6.4f", cumulative_loss);
+    printf("Total loss %6.4f\n", cumulative_loss);
     return 0;
 }
