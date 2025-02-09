@@ -21,7 +21,7 @@ __global__ void cross_entropy(float* preds, float* actual, float* output, int ba
     int batch_idx = blockIdx.x * blockDim.x + threadIdx.x;
     if (batch_idx < batch_size){
         float loss = 0.f;
-        for (int j = 0; j < cols; j++){
+        for (int j = 0; j < class_size; j++){
             loss -= actual[batch_idx*class_size + j] * log(max(1e-6, preds[batch_idx*class_size + j]));
         }
         output[batch_idx] = loss;
@@ -80,7 +80,7 @@ int main(){
 
     // Calculate total loss
     float cumulative_loss = 0.f;
-    for (int b = 0; b < BATCH_SIZE; b++){
+    for (int b = 0; b < batch_size; b++){
         cumulative_loss += h_losses[b];
     }
     printf("Total loss %6.4f", cumulative_loss);
