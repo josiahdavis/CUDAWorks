@@ -14,7 +14,7 @@ __global__ void init_matrix_normal(float* mat, int rows, int cols){
     }
 }
 
-__global__ void init_matrix_one_hot(float* matrix, int indices, int rows, int cols){
+__global__ void init_matrix_one_hot(float* matrix, int* indices, int rows, int cols){
     int i = blockIdx.x * blockDim.x + threadIdx.x;
     if (i < rows){
         for (int j = 0; j < cols; ++j){
@@ -85,7 +85,7 @@ int main(){
     // Allocate memory for GPU
     float *d_logits;
     float *d_preds;
-    float *d_actuals_idx;
+    int *d_actuals_idx;
     float *d_actuals;
     float *d_losses;
     cudaMalloc((void **)&d_logits, batch_size * n_classes * sizeof(float));
@@ -123,7 +123,6 @@ int main(){
     cudaMemcpy(h_losses, d_losses, batch_size * sizeof(float), cudaMemcpyDeviceToHost);
 
     // Inspect outputs
-    print_matrix(h_logits, batch_size, n_classes, "Logits");
     print_matrix(h_preds, batch_size, n_classes, "Preds");
     print_matrix(h_actuals_idx, batch_size, 1, "Actual Class Labels");
     print_matrix(h_actuals, batch_size, n_classes, "Actuals");
