@@ -85,7 +85,7 @@ int main(){
     init_matrix<<<dimGrid, dimBlock>>>(d_logits, batch_size, n_classes);
 
     // Calculate the output probabilities
-    softmax<<<dimGrid, dimBlock>>>(d_logits, d_preds, batch_size, n_features);
+    softmax<<<dimGrid, dimBlock>>>(d_logits, d_preds, batch_size, n_classes);
 
     // Calculate cross entropy losses
     cross_entropy<<<dimGrid, dimBlock>>>(d_preds, d_actuals, d_losses, batch_size, n_classes);
