@@ -35,7 +35,7 @@ void print_matrix(const float* matrix, int rows, int cols, const char* name){
     printf("Matrix %s showing top-left 5x10\n", name);
     for (int i = 0; i < 5 && i < rows; i++){
         for (int j = 0; j < 10 && j < cols; j++){
-            printf("%5.2f ", matrix[i * cols + j]);
+            printf("%5.3f ", matrix[i * cols + j]);
         }
         printf("\n");
     }
