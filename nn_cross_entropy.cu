@@ -80,7 +80,7 @@ int main(){
     int BLOCK_SIZE = 16;
     
     // Set up parameters
-    int batch_size = 4;
+    int batch_size = 5;
     int n_classes = 6;
     
     // Allocate memory for GPU
