@@ -14,15 +14,20 @@ __global__ void init_matrix(float* mat, int rows, int cols){
     }
 }
 
-__global__ void init_zero_one_uniform(float* mat, int rows, int cols){
+__global__ void softmax(float* mat_in, float* mat_out, int rows, int cols){
     int row_i = blockIdx.x * blockDim.x + threadIdx.x;
     int col_j = blockIdx.y * blockDim.y + threadIdx.y;
 
     if (row_i < rows && col_j < cols){
-        int index = row_i * cols + col_j;
-        curandState state;
-        curand_init(123, index, 0, &state);
-        mat[index] = curand_uniform(&state);
+        float maxval = mat_in[row_i * cols];
+        for (int i = 1; i < cols; i ++){
+            maxval = max(maxval, mat_in[row_i * cols + i]);
+        }
+        float divisor = 0.f;
+        for (int i = 0; i < cols; i++){
+            divisor += exp(mat_in[row_i*cols + i] - maxval);
+        }
+        mat_out[row_i * cols + col_j] = exp(mat_in[row_i * cols + col_j] - maxval) / divisor;
     }
 }
 
@@ -60,9 +65,11 @@ int main(){
     int n_classes = 6;
     
     // Allocate memory for GPU
+    float *d_logits;
     float *d_preds;
     float *d_actuals;
     float *d_losses;
+    cudaMalloc((void **)&d_logits, batch_size * n_classes * sizeof(float));
     cudaMalloc((void **)&d_preds, batch_size * n_classes * sizeof(float));
     cudaMalloc((void **)&d_actuals, batch_size * n_classes * sizeof(float));
     cudaMalloc((void **)&d_losses, batch_size * sizeof(float));
@@ -71,11 +78,14 @@ int main(){
     dim3 dimGrid = dim3(ceil(batch_size/(float)BLOCK_SIZE), ceil(n_classes/(float)BLOCK_SIZE), 1);
     dim3 dimBlock = dim3(BLOCK_SIZE, BLOCK_SIZE, 1);
     
-    // Actual labels will be 0 or 1
+    // Actual labels will be 0 or 1, TODO
     init_matrix<<<dimGrid, dimBlock>>>(d_actuals, batch_size, n_classes);
     
-    // NN outputs will be probabilities from 0-1
-    init_zero_one_uniform<<<dimGrid, dimBlock>>>(d_preds, batch_size, n_classes);
+    // NN outputs will be logits
+    init_matrix<<<dimGrid, dimBlock>>>(d_logits, batch_size, n_classes);
+
+    // Calculate the output probabilities
+    softmax<<<dimGrid, dimBlock>>>(d_logits, d_preds, batch_size, n_features);
 
     // Calculate cross entropy losses
     cross_entropy<<<dimGrid, dimBlock>>>(d_preds, d_actuals, d_losses, batch_size, n_classes);
