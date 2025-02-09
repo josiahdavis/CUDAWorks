@@ -29,7 +29,7 @@ __global__ void init_vector(int *output, int rows, int n){
         curandState state;
         curand_init(123, i, 0, &state);
         output[i] = (int)(curand_uniform(&state) * n);
-        printf("Setting output %d to %5.2f\n", i, output[i]);
+        printf("Setting output %d to %d\n", i, output[i]);
     }
 }
 
@@ -101,7 +101,7 @@ int main(){
     
     // Actual labels will be 0 or 1
     // init_vector(int *output, int rows, int n){
-    init_vector<<<ceil(batch_size/(float)BLOCK_SIZE), BLOCK_SIZE>>>(d_actuals_idx, batch_size, n_classes);
+    init_vector<<<dimGrid, BLOCK_SIZE>>>(d_actuals_idx, batch_size, n_classes);
     init_matrix_one_hot<<<dimGrid, BLOCK_SIZE>>>(d_actuals, d_actuals_idx, batch_size, n_classes);
     
     // Neural Network outputs will be logits
