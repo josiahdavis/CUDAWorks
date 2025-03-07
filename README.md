@@ -13,6 +13,7 @@ Short stand-alone examples of how to use CUDA
 9. [`nn_relu.cu`](nn_relu.cu): Relu activation function example.
 10. [`nn_softmax.cu`](nn_softmax.cu): Softmax example with the subtraction of the max value.
 11. [`nn_cross_entropy.cu`](nn_cross_entropy.cu): Cross entropy loss calculation with a guardrail in the log calculation.
+12. [`naive_matmul_timing.cu`](naive_matmul_timing.cu): Calculate FLOPs/s for matmul.
 
 ### Instructions
 
